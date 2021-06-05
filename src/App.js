@@ -1,50 +1,63 @@
 import React from 'react';
 
-import Search from './components/Search'
 import TodoForm from './components/TodoForm'
 import TodoList from './components/TodoList'
+
+const initialToDos =  [
+  {task: "Pick up Kids",
+  id: 1,
+  completed: false,
+},
+{task: "Fix Floor",
+id: 2,
+completed: false,},
+{task: "Pack for trip",
+id: 3,
+completed: false,},
+]
+
+const initialTodoInput = "";
 
 class App extends React.Component {
   constructor () {
     super ();
     this.state = {
-      todo: [],
-      search: ""
+      todos: initialToDos,
+      todoInput: initialTodoInput,
     };
   }
 
-  todoToggle = todoId => {
-    const newTask = this.state.todo.map(task => {
-      return todoId === task.id ? {task, completed: !task.completed} : task
-    });
+updateToDo = (input) =>
+this.setState({
+  todoInput: input,
+});
 
-    this.setState({...this.state, todo: newTask});
-  };
-
-  addToDo = taskName => {
-  const newToDo = {
-    task: taskName,
-    id: Date.now(),
-    completed: false
-  };
+addTodo = () => {
   this.setState({
-    ...this.state,
-    todo: [this.state.todo, newToDo]
+    todos: [
+      ...this.state.todos,
+      {
+        task: this.state.todoInput,
+        id: Date.now(),
+        completed: false,
+      },
+    ],
+  });
+  this.setState({ todoInput: initialTodoInput });
+};
+
+toggleCompleted = (id) => {
+  const newTodos = this.state.todos.map((todo) =>
+    id === todo.id ? { ...todo, completed: !todo.completed } : todo
+  );
+  return this.setState({
+    todos: newTodos,
   });
 };
 
-clearList = () => {
-  this.setState({
-    ...this.state,
-    todo: this.state.todo.filter(task => !task.completed)
-  });
-};
-
-searchList = event => {
-  this.setState({
-    ...this.state,
-    search: event.target.value
-  });
+clearCompleted = () => {
+  const incompleteTodos = this.state.todos.filter((todo) => !todo.completed);
+  this.setState({todos: incompleteTodos});
 };
  
   // you will need a place to store your state in this component.
@@ -54,7 +67,7 @@ searchList = event => {
     return (
       <div>
         <h2>To Do List!</h2>
-        <Search searchList={this.searchList} />
+        {/* <Search searchList={this.searchList} /> */}
         <TodoForm addToDo={this.addToDo} />
         <input type='text' placeholder='new task' onChange={this.handleInputChange} />
         <TodoList clearList={this.clearList}
